@@ -80,6 +80,9 @@ namespace j {
 	private: System::Windows::Forms::Label^  x2;
 	private: System::Windows::Forms::Label^  nameOfPicture;
 	private: System::Windows::Forms::PictureBox^  pictureBox1;
+	private: System::Windows::Forms::Label^  x12;
+	private: System::Windows::Forms::Label^  rx1;
+	private: System::Windows::Forms::Label^  rx2;
 	protected:
 
 	private:
@@ -106,6 +109,9 @@ namespace j {
 			this->x2 = (gcnew System::Windows::Forms::Label());
 			this->nameOfPicture = (gcnew System::Windows::Forms::Label());
 			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
+			this->x12 = (gcnew System::Windows::Forms::Label());
+			this->rx1 = (gcnew System::Windows::Forms::Label());
+			this->rx2 = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
 			this->SuspendLayout();
 			// 
@@ -216,12 +222,42 @@ namespace j {
 			this->pictureBox1->TabIndex = 11;
 			this->pictureBox1->TabStop = false;
 			// 
+			// x12
+			// 
+			this->x12->AutoSize = true;
+			this->x12->BackColor = System::Drawing::Color::White;
+			this->x12->Location = System::Drawing::Point(414, 247);
+			this->x12->Name = L"x12";
+			this->x12->Size = System::Drawing::Size(0, 13);
+			this->x12->TabIndex = 12;
+			// 
+			// rx1
+			// 
+			this->rx1->AutoSize = true;
+			this->rx1->BackColor = System::Drawing::Color::White;
+			this->rx1->Location = System::Drawing::Point(328, 237);
+			this->rx1->Name = L"rx1";
+			this->rx1->Size = System::Drawing::Size(0, 13);
+			this->rx1->TabIndex = 13;
+			// 
+			// rx2
+			// 
+			this->rx2->AutoSize = true;
+			this->rx2->BackColor = System::Drawing::Color::White;
+			this->rx2->Location = System::Drawing::Point(488, 237);
+			this->rx2->Name = L"rx2";
+			this->rx2->Size = System::Drawing::Size(0, 13);
+			this->rx2->TabIndex = 14;
+			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::SystemColors::InactiveCaption;
 			this->ClientSize = System::Drawing::Size(593, 368);
+			this->Controls->Add(this->rx2);
+			this->Controls->Add(this->rx1);
+			this->Controls->Add(this->x12);
 			this->Controls->Add(this->pictureBox1);
 			this->Controls->Add(this->nameOfPicture);
 			this->Controls->Add(this->x2);
@@ -364,6 +400,7 @@ namespace j {
 		int num = 0;
 		int x = 0;
 		int x2 = 0;
+		std::string letter="";
 		for (std::string::size_type i = 0; i < strFinalString.size(); ++i) {
 			if (47 < (int)strFinalString[i] && (int)strFinalString[i]<58) {	
 				int b= strFinalString[i]-48;
@@ -406,13 +443,25 @@ namespace j {
 					}
 				}
 			}
+			else if(!strFinalString[i].Equals('+') && !strFinalString[i].Equals('-') && !strFinalString[i].Equals('=')){
+				std::string firstLetter(1, strFinalString[i]);
+				if (letter.compare(firstLetter)==0 || letter.size()==0) {
+					letter = strFinalString[i];
+				}
+				else {
+					
+					std::cout << "Mora postojati samo jedna promenljiva!!\n";
+					return;
+				}
+			}
 		}
-		
+
+		std::cout << "prepoznata promenljiva : " << letter<<'\n';
 		std::size_t asi = strFinalString.find('=');
 
 		std::string::size_type start_pos = 0;
 		while (std::string::npos !=
-			(start_pos = strFinalString.find("x2", start_pos)))
+			(start_pos = strFinalString.find(letter+'2', start_pos)))
 		{
 
 			if (start_pos < asi) {
@@ -473,7 +522,7 @@ namespace j {
 
 		start_pos = 0;
 		while (std::string::npos !=
-			(start_pos = strFinalString.find("x", start_pos)))
+			(start_pos = strFinalString.find(letter, start_pos)))
 		{
 			if (start_pos != strFinalString.size()) {
 				if (!strFinalString[start_pos + 1].Equals('2')) {
@@ -531,23 +580,40 @@ namespace j {
 			
 		}
 		
-		
-		
-		std::cout << " x2 :" << x2 << '\n';
-		std::cout << " x :" << x << '\n';
+		std::cout << letter<<"2 :" << x2 << '\n';
+		std::cout << letter<<" :" << x << '\n';
 		std::cout << " num: " << num << '\n';
 		
-		float D = -x + float(sqrt(pow(x, 2) - 4 * num*x2));
+		float D = float(sqrt(pow(x, 2) - 4 * num*x2));
 		if (D > 0) {
 
 			float resenje1 = float(-x + float(sqrt(pow(x, 2) - 4 * num*x2))) / float(2 * x2);
 			float resenje2 = float(-x - float(sqrt(pow(x, 2) - 4 * num*x2))) / float(2 * x2);
 
+			this->x12->Text = "";
 			if (x2 >= 0) {
+				if (resenje1 < resenje2) {
+					this->rx1->Text = Convert::ToString(resenje1);
+					this->rx2->Text = Convert::ToString(resenje2);
+				}
+				else {
+					this->rx1->Text = Convert::ToString(resenje2);
+					this->rx2->Text = Convert::ToString(resenje1);
+				}
 				this->pictureBox1->Load("grafik1.png");
 			}
 			else if(x2<0){
 				this->pictureBox1->Load("grafik2.png");
+				this->x12->Text = "";
+				
+					if (resenje1 < resenje2) {
+						this->rx1->Text = Convert::ToString(resenje1);
+						this->rx2->Text = Convert::ToString(resenje2);
+					}
+					else {
+						this->rx1->Text = Convert::ToString(resenje2);
+						this->rx2->Text = Convert::ToString(resenje1);
+					}
 			}
 			this->x1->Text = Convert::ToString(resenje1);
 			this->x2->Text = Convert::ToString(resenje2);
@@ -557,6 +623,9 @@ namespace j {
 			
 			float resenje1 = float(-x + float(sqrt(pow(x, 2) - 4 * num*x2))) / float(2 * x2);
 		//	float resenje2 = float(-x - float(sqrt(pow(x, 2) - 4 * num*x2))) / float(2 * x2);
+			this->x12->Text= Convert::ToString(resenje1);
+			this->rx1->Text = "";
+			this->rx2->Text = "";
 			if (x2 >= 0) {
 				this->pictureBox1->Load("grafik3.png");
 			}
@@ -568,6 +637,9 @@ namespace j {
 			this->x2->Text = Convert::ToString(resenje1);
 
 		}else {
+			this->rx1->Text = "";
+			this->rx2->Text = "";
+			this->x12->Text = "";
 			if (x2 > 0) {
 				this->pictureBox1->Load("grafik5.png");
 			}
