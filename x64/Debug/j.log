@@ -1,5 +1,5 @@
 ﻿  MyForm.cpp
-c:\users\svetlana\desktop\jednacina\j\MyForm.h(352): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\svetlana\desktop\jednacina\j\MyForm.h(396): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 c:\opencv-3.1.0\opencv\build\include\opencv2\core\cvstd.hpp(599): warning C4793: 'cv::String::String': function compiled as native:
   	Found an intrinsic not supported in managed code
 c:\opencv-3.1.0\opencv\build\include\opencv2\core\mat.inl.hpp(392): warning C4793: 'cv::Mat::Mat': function compiled as native:

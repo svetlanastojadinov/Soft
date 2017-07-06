@@ -6,6 +6,10 @@
 #include <sstream>
 #include <vector>
 #include <iterator>
+#include <iostream>
+#include <cstring>
+#include <cassert>
+using namespace std;
 
 #include<opencv2/core/core.hpp>
 #include<opencv2/highgui/highgui.hpp>
@@ -41,7 +45,47 @@ namespace j {
 		}
 
 	};
-	
+	size_t levenshtein_distance(const char* s, size_t n, const char* t, size_t m)
+	{
+		++n; ++m;
+		size_t* d = new size_t[n * m];
+
+		memset(d, 0, sizeof(size_t) * n * m);
+
+		for (size_t i = 1, im = 0; i < m; ++i, ++im)
+		{
+			for (size_t j = 1, jn = 0; j < n; ++j, ++jn)
+			{
+				if (s[jn] == t[im])
+				{
+					d[(i * n) + j] = d[((i - 1) * n) + (j - 1)];
+				}
+				else
+				{
+					d[(i * n) + j] = min(d[(i - 1) * n + j] + 1, /* A deletion. */
+						min(d[i * n + (j - 1)] + 1, /* An insertion. */
+							d[(i - 1) * n + (j - 1)] + 1)); /* A substitution. */
+				}
+			}
+		}
+
+#ifdef DEBUG_PRINT
+		for (size_t i = 0; i < m; ++i)
+		{
+			for (size_t j = 0; j < n; ++j)
+			{
+				cout << d[(i * n) + j] << " ";
+			}
+			cout << endl;
+		}
+#endif
+
+		size_t r = d[n * m - 1];
+
+		delete[] d;
+
+		return r;
+	};
 	
 	public ref class MyForm : public System::Windows::Forms::Form
 	{
@@ -396,6 +440,66 @@ namespace j {
 
 		String^ strEq = gcnew String(strFinalString.c_str());
 		
+
+
+		std::string file = getFilename();
+
+		std::string ocekivana = "";
+		if (file.compare("test1.png")==0) {
+			ocekivana = "2x2+1-3x==x2-x";
+		}
+		else if (file.compare("test2.png") == 0) {
+			ocekivana = "x2+4x-6==0";
+		}
+		else if (file.compare("test3.png") == 0) {
+			ocekivana = "x+5x-8==0-x2";
+		}
+		else if (file.compare("test4.png") == 0) {
+			ocekivana = "x2+2x+1==0";
+
+		}
+		else if (file.compare("test5.png") == 0) {
+			ocekivana = "1+7k==k2";
+		}
+		else if (file.compare("test6.png") == 0) {
+			ocekivana = "-2x-8==3x2+8-x2";
+		}
+		else if (file.compare("test7.png") == 0) {
+			ocekivana = "3x2+9==x2+1";
+		}
+		else if (file.compare("test8.png") == 0) {
+			ocekivana = "-4n+n2==5";
+		}
+		else if (file.compare("test9.png") == 0) {
+			ocekivana = "a+h-4t==0";
+		}
+		const char *s1 = strFinalString.c_str();
+		const char *s2 = ocekivana.c_str();
+
+		size_t ld = levenshtein_distance(s1, strlen(s1), s2, strlen(s2));
+
+		
+		cout << "The Levenshtein string distance between " << s1 << " and " << s2 << ": " << ld << endl;
+
+		if (strFinalString.length() >= ocekivana.length())
+		{
+			float percentage = ((float)levenshtein_distance(s1, strlen(s1), s2, strlen(s2)) / strFinalString.size()) * 100;
+			if (percentage == 0) {
+				cout << "These sequences are 100% similar." << endl;
+			}else
+			cout << "These sequences are " << 100-percentage << "% similar." << endl;
+		}
+		else if (ocekivana.length() >= strFinalString.length())
+		{
+			float percentage = ((float)levenshtein_distance(s1, strlen(s1), s2, strlen(s2)) / ocekivana.size()) * 100;
+			if (percentage == 0) {
+				cout << "These sequences are 100% similar." << endl;
+			}else
+			cout << "These sequences are " << 100-percentage << "% similiar." << endl;
+		}
+
+
+
 		this->equation->Text = strEq;
 		int num = 0;
 		int x = 0;
@@ -649,6 +753,10 @@ namespace j {
 			this->x1->Text = "imaginary num ";
 			this->x2->Text = "imaginary num ";
 		}
+
+
+		
+
 	}
 private: System::Void x1_Click(System::Object^  sender, System::EventArgs^  e) {
 }
